@@ -1,0 +1,11 @@
+.container {
+  text-align: center;
+  background-color: black;
+  padding: 70px;
+}
+
+.canvas {
+  border:solid;
+  border-width: 2px;
+  border-color: white;
+}
