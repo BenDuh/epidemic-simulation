@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "../../styles/App.css"
+import "../../styles/App.css";
 
 import Person from "../../models/Person";
 import PersonLight from "../../models/PersonLight";
@@ -7,6 +7,7 @@ import PersonStatus from "../../models/PersonStatus";
 import { delay } from "lodash";
 import ESColors from "../../ressources/ESColors";
 import Dashboard from "../dashboard/Dashboard";
+import StatsGraph from "../../models/StatsGraph";
 
 interface Props {}
 interface State {
@@ -34,8 +35,8 @@ export default class Graphic extends Component<Props, State> {
     for (let i = 0; i < 100; i++) {
       member = {
         id: i,
-        x: this._getRandomArbitrary(2, 497),
-        y: this._getRandomArbitrary(2, 297),
+        x: this._getRandomArbitrary(2, 547),
+        y: this._getRandomArbitrary(2, 322),
         oldX: 0,
         oldY: 0,
         oldDirectionX: 0,
@@ -219,9 +220,9 @@ export default class Graphic extends Component<Props, State> {
     let directionNull: boolean =
       member.oldDirectionX === 0 && member.oldDirectionY === 0;
     let limitCanvasXMin: boolean = x === 5 || x === 2;
-    let limitCanvasXMax: boolean = x === 495 || x === 497;
+    let limitCanvasXMax: boolean = x === 545 || x === 547;
     let limitCanvasYMin: boolean = y === 5 || y === 2;
-    let limitCanvasYMax: boolean = y === 295 || y === 297;
+    let limitCanvasYMax: boolean = y === 320 || y === 322;
     let limitCanvas =
       limitCanvasXMin || limitCanvasXMax || limitCanvasYMin || limitCanvasYMax;
     if (luckChangeDirection < 0.9 && !directionNull && !limitCanvas) {
@@ -241,14 +242,14 @@ export default class Graphic extends Component<Props, State> {
     }
     if (x + newDirectionX < 3) {
       x = x + this._limitDirection(1);
-    } else if (x + newDirectionX > 497) {
+    } else if (x + newDirectionX > 547) {
       x = x + this._limitDirection(-1);
     } else {
       x = x + newDirectionX;
     }
     if (y + newDirectionY < 3) {
       y = y + this._limitDirection(1);
-    } else if (y + newDirectionY > 297) {
+    } else if (y + newDirectionY > 322) {
       y = y + this._limitDirection(-1);
     } else {
       y = y + newDirectionY;
@@ -269,17 +270,43 @@ export default class Graphic extends Component<Props, State> {
     });
   }
 
+  _statsGraphic(): StatsGraph {
+    let statsGraph: StatsGraph = {
+      none: 0,
+      infected: 0,
+      recovered: 0,
+      death: 0,
+    };
+    this.state.arrayMembers.map((member) => {
+      switch (member.status) {
+        case PersonStatus.none:
+          statsGraph.none = statsGraph.none + 1;
+          break;
+        case PersonStatus.infected:
+          statsGraph.infected = statsGraph.infected + 1;
+          break;
+        case PersonStatus.recovered:
+          statsGraph.recovered = statsGraph.recovered + 1;
+          break;
+        case PersonStatus.death:
+          statsGraph.death = statsGraph.death + 1;
+          break;
+      }
+    });
+    return statsGraph;
+  }
+
   render() {
     return (
       <div className="containerCanvasDashboard">
         <canvas
           ref="canvas"
-          width={500}
-          height={300}
+          width={550}
+          height={325}
           className="canvas"
           id="canvas"
         />
-        <Dashboard/>
+        <Dashboard statsGraph={this._statsGraphic()} />
       </div>
     );
   }
