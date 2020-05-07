@@ -1,9 +1,12 @@
 import React, { Component } from "react";
-import "../../styles/App.css";
+import "../../styles/App.css"
 
 import Person from "../../models/Person";
 import PersonLight from "../../models/PersonLight";
 import PersonStatus from "../../models/PersonStatus";
+import { delay } from "lodash";
+import ESColors from "../../ressources/ESColors";
+import Dashboard from "../dashboard/Dashboard";
 
 interface Props {}
 interface State {
@@ -28,7 +31,7 @@ export default class Graphic extends Component<Props, State> {
     let member: Person;
     let arrayMembers: any = [];
     let coordPersonInfected: PersonLight[] = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 100; i++) {
       member = {
         id: i,
         x: this._getRandomArbitrary(2, 497),
@@ -45,13 +48,14 @@ export default class Graphic extends Component<Props, State> {
       arrayMembers.push(member);
     }
     this.setState({ arrayMembers, coordPersonInfected }, () => this.draw());
+    delay(() => this._curedOrDeath(0, 0), 15000);
   }
 
-  _getRandomArbitrary(min: number, max: number) {
+  _getRandomArbitrary(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min) + min);
   }
 
-  draw() {
+  draw(): void {
     const canvas: any = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     this.state.arrayMembers.map((member: Person, index: number) => {
@@ -73,15 +77,21 @@ export default class Graphic extends Component<Props, State> {
         })
       ) {
         this._infection(member, index);
-        ctx.fillStyle = "white";
-      } else {
+        ctx.fillStyle = ESColors.none;
+      } else if (member.status === PersonStatus.infected) {
         this._isInfected(member);
-        ctx.fillStyle = "red";
+        ctx.fillStyle = ESColors.infected;
+      } else if (member.status === PersonStatus.recovered) {
+        ctx.fillStyle = ESColors.recovered;
+      } else {
+        ctx.fillStyle = ESColors.death;
       }
       ctx.fillRect(member.x, member.y, 6, 6);
       ctx.stroke();
       ctx.closePath();
-      this._limitCanvas(member, statusInfected, index);
+      if (member.status !== PersonStatus.death) {
+        this._limitCanvas(member, statusInfected, index);
+      }
     });
     setTimeout(() => requestAnimationFrame(this.draw), 1000 / fps);
   }
@@ -96,16 +106,17 @@ export default class Graphic extends Component<Props, State> {
       x: infected.x,
       y: infected.y,
     };
+
     this.setState({ coordPersonInfected });
   }
 
-  _infection(person: Person, index: number) {
+  _infection(person: Person, index: number): void {
     let coordPersonInfected: PersonLight[] = this.state.coordPersonInfected;
     let isInfected: boolean = false;
     coordPersonInfected.map((infected, index) => {
       if (
-        this._inRange(person.x, infected.x - 3, infected.x + 3) &&
-        this._inRange(person.y, infected.y - 3, infected.y + 3)
+        this._inRange(person.x, infected.x - 7, infected.x + 7) &&
+        this._inRange(person.y, infected.y - 7, infected.y + 7)
       ) {
         isInfected = true;
       }
@@ -119,11 +130,29 @@ export default class Graphic extends Component<Props, State> {
         y: person.y,
       });
       arrayMembers[index].status = PersonStatus.infected;
-      this.setState({ coordPersonInfected, arrayMembers });
+      this.setState({ coordPersonInfected, arrayMembers }, () =>
+        delay(
+          () => this._curedOrDeath(index, coordPersonInfected.length - 1),
+          15000
+        )
+      );
     }
   }
 
-  _inRange(x: number, min: number, max: number) {
+  _curedOrDeath(indexMember: number, indexInfected: number): void {
+    let coordPersonInfected: PersonLight[] = this.state.coordPersonInfected;
+    let arrayMembers: Person[] = this.state.arrayMembers;
+    coordPersonInfected = coordPersonInfected.splice(indexInfected, 2);
+    let luck = Math.random();
+    if (luck < 0.8) {
+      arrayMembers[indexMember].status = PersonStatus.recovered;
+    } else {
+      arrayMembers[indexMember].status = PersonStatus.death;
+    }
+    this.setState({ arrayMembers });
+  }
+
+  _inRange(x: number, min: number, max: number): boolean {
     return (x - min) * (x - max) <= 0;
   }
 
@@ -158,7 +187,7 @@ export default class Graphic extends Component<Props, State> {
     return newDirection;
   }
 
-  _limitDirection(oldDirection: number) {
+  _limitDirection(oldDirection: number): number {
     let newDirection: number;
     let luck = Math.random();
     if (oldDirection === 1) {
@@ -177,7 +206,11 @@ export default class Graphic extends Component<Props, State> {
     return newDirection;
   }
 
-  _limitCanvas(member: Person, statusInfected: PersonStatus, index: number) {
+  _limitCanvas(
+    member: Person,
+    statusInfected: PersonStatus,
+    index: number
+  ): void {
     let x: number = member.x;
     let y: number = member.y;
     let newDirectionX: number;
@@ -238,7 +271,7 @@ export default class Graphic extends Component<Props, State> {
 
   render() {
     return (
-      <div className="containerCanvas">
+      <div className="containerCanvasDashboard">
         <canvas
           ref="canvas"
           width={500}
@@ -246,6 +279,7 @@ export default class Graphic extends Component<Props, State> {
           className="canvas"
           id="canvas"
         />
+        <Dashboard/>
       </div>
     );
   }
