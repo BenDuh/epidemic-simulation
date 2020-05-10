@@ -8,12 +8,14 @@ import { delay } from "lodash";
 import ESColors from "../../ressources/ESColors";
 import Dashboard from "../dashboard/Dashboard";
 import StatsGraph from "../../models/StatsGraph";
+import DistancingSocial from "../../models/DistancingSocial";
 
 interface Props {}
 interface State {
   contextCanvas: any;
   arrayMembers: Person[];
   coordPersonInfected: PersonLight[];
+  distancingSocial: number;
 }
 
 const fps: number = 60;
@@ -24,6 +26,7 @@ export default class Graphic extends Component<Props, State> {
       contextCanvas: React.createRef(),
       arrayMembers: [],
       coordPersonInfected: [],
+      distancingSocial: DistancingSocial.hard,
     };
     this.draw = this.draw.bind(this);
   }
@@ -50,6 +53,10 @@ export default class Graphic extends Component<Props, State> {
     }
     this.setState({ arrayMembers, coordPersonInfected }, () => this.draw());
     delay(() => this._curedOrDeath(0, 0), 15000);
+  }
+
+  _changeDistancingSocial(distancingSocial: DistancingSocial): void {
+    this.setState({ distancingSocial });
   }
 
   _getRandomArbitrary(min: number, max: number): number {
@@ -164,9 +171,9 @@ export default class Graphic extends Component<Props, State> {
   ): number {
     let newDirection: number;
     let luck = Math.random();
-    if (oldDirection === 1) {
+    if (oldDirection === this.state.distancingSocial) {
       if (luck < 0.7 && !limitCanvasMax) {
-        newDirection = 1;
+        newDirection = this.state.distancingSocial;
       } else {
         newDirection = 0;
       }
@@ -174,13 +181,13 @@ export default class Graphic extends Component<Props, State> {
       if (luck < 0.5) {
         newDirection = 0;
       } else if (luck < 0.75) {
-        newDirection = 1;
+        newDirection = this.state.distancingSocial;
       } else {
-        newDirection = -1;
+        newDirection = -this.state.distancingSocial;
       }
     } else {
       if (luck < 0.7 && !limitCanvasMin) {
-        newDirection = -1;
+        newDirection = -this.state.distancingSocial;
       } else {
         newDirection = 0;
       }
@@ -191,15 +198,15 @@ export default class Graphic extends Component<Props, State> {
   _limitDirection(oldDirection: number): number {
     let newDirection: number;
     let luck = Math.random();
-    if (oldDirection === 1) {
+    if (oldDirection === this.state.distancingSocial) {
       if (luck < 0.8) {
-        newDirection = 2;
+        newDirection = this.state.distancingSocial * 3;
       } else {
         newDirection = 0;
       }
     } else {
       if (luck < 0.8) {
-        newDirection = -2;
+        newDirection = -this.state.distancingSocial * 3;
       } else {
         newDirection = 0;
       }
@@ -219,10 +226,26 @@ export default class Graphic extends Component<Props, State> {
     let luckChangeDirection = Math.random();
     let directionNull: boolean =
       member.oldDirectionX === 0 && member.oldDirectionY === 0;
-    let limitCanvasXMin: boolean = x === 5 || x === 2;
-    let limitCanvasXMax: boolean = x === 545 || x === 547;
-    let limitCanvasYMin: boolean = y === 5 || y === 2;
-    let limitCanvasYMax: boolean = y === 320 || y === 322;
+    let limitCanvasXMin: boolean = this._inRange(
+      x,
+      2,
+      2 + 2 * this.state.distancingSocial
+    );
+    let limitCanvasXMax: boolean = this._inRange(
+      x,
+      547,
+      547 - 2 * this.state.distancingSocial
+    );
+    let limitCanvasYMin: boolean = this._inRange(
+      y,
+      2,
+      2 + 2 * this.state.distancingSocial
+    );
+    let limitCanvasYMax: boolean = this._inRange(
+      y,
+      322,
+      322 - 2 * this.state.distancingSocial
+    );
     let limitCanvas =
       limitCanvasXMin || limitCanvasXMax || limitCanvasYMin || limitCanvasYMax;
     if (luckChangeDirection < 0.9 && !directionNull && !limitCanvas) {
@@ -241,16 +264,16 @@ export default class Graphic extends Component<Props, State> {
       );
     }
     if (x + newDirectionX < 3) {
-      x = x + this._limitDirection(1);
+      x = x + this._limitDirection(this.state.distancingSocial);
     } else if (x + newDirectionX > 547) {
-      x = x + this._limitDirection(-1);
+      x = x + this._limitDirection(-this.state.distancingSocial);
     } else {
       x = x + newDirectionX;
     }
     if (y + newDirectionY < 3) {
-      y = y + this._limitDirection(1);
+      y = y + this._limitDirection(this.state.distancingSocial);
     } else if (y + newDirectionY > 322) {
-      y = y + this._limitDirection(-1);
+      y = y + this._limitDirection(-this.state.distancingSocial);
     } else {
       y = y + newDirectionY;
     }
@@ -306,7 +329,12 @@ export default class Graphic extends Component<Props, State> {
           className="canvas"
           id="canvas"
         />
-        <Dashboard statsGraph={this._statsGraphic()} />
+        <Dashboard
+          statsGraph={this._statsGraphic()}
+          changeDistSoc={(distancingSocial: DistancingSocial) =>
+            this._changeDistancingSocial(distancingSocial)
+          }
+        />
       </div>
     );
   }
