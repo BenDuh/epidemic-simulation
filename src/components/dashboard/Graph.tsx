@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "../../styles/App.css";
 import StatsGraph from "../../models/StatsGraph";
 import ESColors from "../../ressources/ESColors";
@@ -30,10 +30,26 @@ export default class Graph extends Component<Props, State> {
     return (
       <div className="containerTotalGraph">
         <div className="containerGraph">
-          <div className="graph" style={noneStyle} />
-          <div className="graph" style={infectedStyle} />
-          <div className="graph" style={recoveredStyle} />
-          <div className="graph" style={deathStyle} />
+          {this.props.statsGraph.none ? (
+            <div className="graph" style={noneStyle} />
+          ) : (
+            <Fragment />
+          )}
+          {this.props.statsGraph.infected ? (
+            <div className="graph" style={infectedStyle} />
+          ) : (
+            <Fragment />
+          )}
+          {this.props.statsGraph.recovered ? (
+            <div className="graph" style={recoveredStyle} />
+          ) : (
+            <Fragment />
+          )}
+          {this.props.statsGraph.death ? (
+            <div className="graph" style={deathStyle} />
+          ) : (
+            <Fragment />
+          )}
         </div>
         <div className="legend">
           <div className="legendItem">

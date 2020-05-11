@@ -1,8 +1,15 @@
 /* General */
-*{
-  font-family: 'Jost';
+* {
+  font-family: "Jost";
   color: white;
   margin: 0;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .container {
@@ -15,18 +22,18 @@
 
 /* Canvas */
 .canvas {
-  border:solid;
+  border: solid;
   border-width: 2px;
   border-color: white;
 }
 
-.containerCanvas{
+.containerCanvas {
   display: flex;
   flex-direction: column;
 }
 
 /* Dashboard */
-.containerCanvasDashboard{
+.containerCanvasDashboard {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -35,7 +42,7 @@
   padding-bottom: 200px;
 }
 
-.containerDashboard{
+.containerDashboard {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -43,35 +50,40 @@
   width: 400px;
 }
 
-.containerTotalGraph{
+.containerTotalGraph {
   width: 400px;
 }
 
 /* Graphique */
-.containerGraph{
+.containerGraph {
   width: 400px;
   margin-bottom: 25px;
   display: flex;
 }
 
-.graph{
+.graph {
   height: 30px;
+  transition: width 500ms ease;
 }
 
-.legend{
+.graphTransitionPlus {
+  transform: translate(4px, 150px) rotate(20deg);
+}
+
+.legend {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 420px;
 }
 
-.icon{
+.icon {
   width: 7px;
   height: 7px;
   margin-bottom: 4px;
 }
 
-.legendItem{
+.legendItem {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -80,19 +92,19 @@
 }
 
 /* Choices */
-.descrip{
-  font-family: 'Jost';
+.descrip {
+  font-family: "Jost";
   font-weight: 100;
   font-size: 11px;
 }
 
-.title{
+.title {
   margin-top: 25px;
   font-size: 22px;
   font-weight: 300;
 }
 
-.button{
+.button {
   width: 100px;
   height: 35px;
   background-color: #212523;
@@ -102,11 +114,11 @@
   font-weight: 100;
 }
 
-.button:focus{
+.button:focus {
   outline: none;
 }
 
-.containerButton{
+.containerButton {
   margin-top: 25px;
   width: 350px;
   display: flex;
