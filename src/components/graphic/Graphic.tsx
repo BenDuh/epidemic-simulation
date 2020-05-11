@@ -9,17 +9,20 @@ import ESColors from "../../ressources/ESColors";
 import Dashboard from "../dashboard/Dashboard";
 import StatsGraph from "../../models/StatsGraph";
 import DistancingSocial from "../../models/DistancingSocial";
+import LevelInfection from "../../models/LevelInfection";
 
 interface Props {}
 interface State {
   contextCanvas: any;
   arrayMembers: Person[];
   coordPersonInfected: PersonLight[];
-  distancingSocial: number;
+  distancingSocial: DistancingSocial;
+  levelInfection: LevelInfection;
 }
 
 const fps: number = 60;
 export default class Graphic extends Component<Props, State> {
+  timer: any;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -27,14 +30,64 @@ export default class Graphic extends Component<Props, State> {
       arrayMembers: [],
       coordPersonInfected: [],
       distancingSocial: DistancingSocial.hard,
+      levelInfection: LevelInfection.low,
     };
+    this.timer = null;
     this.draw = this.draw.bind(this);
   }
 
   componentDidMount() {
+    this._resetAction();
+  }
+
+  render() {
+    const buttonReset = {
+      width: 145,
+      marginTop: 15,
+    };
+    return (
+      <div className="containerCanvasDashboard">
+        <div className="containerCanvas">
+          <canvas
+            ref="canvas"
+            width={550}
+            height={325}
+            className="canvas"
+            id="canvas"
+          />
+          <button
+            className="button"
+            style={buttonReset}
+            onClick={() => this._resetAction(true)}
+          >
+            reset simulation
+          </button>
+        </div>
+        <Dashboard
+          statsGraph={this._statsGraphic()}
+          changeDistSoc={(distancingSocial: DistancingSocial) =>
+            this._changeDistancingSocial(distancingSocial)
+          }
+          distancingSocial={this.state.distancingSocial}
+          changeLevelInfection={(levelInfection: LevelInfection) =>
+            this._changeLevelInfection(levelInfection)
+          }
+          levelInfection={this.state.levelInfection}
+        />
+      </div>
+    );
+  }
+
+  _resetAction(clear?: boolean) {
     let member: Person;
     let arrayMembers: any = [];
     let coordPersonInfected: PersonLight[] = [];
+    if (clear) {
+      clearTimeout(this.timer);
+      const canvas: any = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
     for (let i = 0; i < 100; i++) {
       member = {
         id: i,
@@ -101,7 +154,7 @@ export default class Graphic extends Component<Props, State> {
         this._limitCanvas(member, statusInfected, index);
       }
     });
-    setTimeout(() => requestAnimationFrame(this.draw), 1000 / fps);
+    this.timer = setTimeout(() => requestAnimationFrame(this.draw), 1000 / fps);
   }
 
   _isInfected(infected: Person): void {
@@ -123,8 +176,16 @@ export default class Graphic extends Component<Props, State> {
     let isInfected: boolean = false;
     coordPersonInfected.map((infected, index) => {
       if (
-        this._inRange(person.x, infected.x - 7, infected.x + 7) &&
-        this._inRange(person.y, infected.y - 7, infected.y + 7)
+        this._inRange(
+          person.x,
+          infected.x - this.state.levelInfection,
+          infected.x + this.state.levelInfection
+        ) &&
+        this._inRange(
+          person.y,
+          infected.y - this.state.levelInfection,
+          infected.y + this.state.levelInfection
+        )
       ) {
         isInfected = true;
       }
@@ -293,6 +354,10 @@ export default class Graphic extends Component<Props, State> {
     });
   }
 
+  _changeLevelInfection(levelInfection: LevelInfection) {
+    this.setState({ levelInfection });
+  }
+
   _statsGraphic(): StatsGraph {
     let statsGraph: StatsGraph = {
       none: 0,
@@ -317,25 +382,5 @@ export default class Graphic extends Component<Props, State> {
       }
     });
     return statsGraph;
-  }
-
-  render() {
-    return (
-      <div className="containerCanvasDashboard">
-        <canvas
-          ref="canvas"
-          width={550}
-          height={325}
-          className="canvas"
-          id="canvas"
-        />
-        <Dashboard
-          statsGraph={this._statsGraphic()}
-          changeDistSoc={(distancingSocial: DistancingSocial) =>
-            this._changeDistancingSocial(distancingSocial)
-          }
-        />
-      </div>
-    );
   }
 }

@@ -1,3 +1,4 @@
+/* General */
 *{
   font-family: 'Jost';
   color: white;
@@ -5,16 +6,52 @@
 }
 
 .container {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #212523;
-  padding-top: 100px;
   height: 100vh;
 }
 
+/* Canvas */
 .canvas {
   border:solid;
   border-width: 2px;
   border-color: white;
+}
+
+.containerCanvas{
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dashboard */
+.containerCanvasDashboard{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 30px 0;
+  padding-bottom: 200px;
+}
+
+.containerDashboard{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 60px;
+  width: 400px;
+}
+
+.containerTotalGraph{
+  width: 400px;
+}
+
+/* Graphique */
+.containerGraph{
+  width: 400px;
+  margin-bottom: 25px;
+  display: flex;
 }
 
 .graph{
@@ -24,8 +61,8 @@
 .legend{
   display: flex;
   align-items: center;
-  width: "100%";
   justify-content: center;
+  width: 420px;
 }
 
 .icon{
@@ -39,33 +76,14 @@
   flex-direction: column;
   align-items: center;
   padding: 0 13px;
+  width: 100px;
 }
 
+/* Choices */
 .descrip{
   font-family: 'Jost';
   font-weight: 100;
-  font-size: 15px;
-}
-
-.containerGraph{
-  width: 400px;
-  margin-bottom: 25px;
-  display: flex;
-}
-
-.containerCanvasDashboard{
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 30px 0;
-}
-
-.containerDashboard{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-left: 60px;
+  font-size: 11px;
 }
 
 .title{
@@ -84,8 +102,12 @@
   font-weight: 100;
 }
 
+.button:focus{
+  outline: none;
+}
+
 .containerButton{
-  margin: 25px 0;
+  margin-top: 25px;
   width: 350px;
   display: flex;
   justify-content: space-between;

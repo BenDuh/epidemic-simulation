@@ -28,7 +28,7 @@ export default class Graph extends Component<Props, State> {
       backgroundColor: ESColors.death,
     };
     return (
-      <div>
+      <div className="containerTotalGraph">
         <div className="containerGraph">
           <div className="graph" style={noneStyle} />
           <div className="graph" style={infectedStyle} />
