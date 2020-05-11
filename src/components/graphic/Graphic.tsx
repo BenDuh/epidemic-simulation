@@ -144,7 +144,7 @@ export default class Graphic extends Component<Props, State> {
         ctx.fillStyle = ESColors.infected;
       } else if (member.status === PersonStatus.recovered) {
         ctx.fillStyle = ESColors.recovered;
-      } else {
+      } else if (member.status === PersonStatus.death) {
         ctx.fillStyle = ESColors.death;
       }
       ctx.fillRect(member.x, member.y, 6, 6);

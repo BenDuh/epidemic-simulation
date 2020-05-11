@@ -1,6 +1,6 @@
 enum DistancingSocial {
-    low = 5,
-    medium = 3,
+    low = 3,
+    medium = 2,
     hard = 1
 }
 
