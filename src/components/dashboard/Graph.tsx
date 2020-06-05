@@ -12,50 +12,49 @@ interface State {}
 export default class Graph extends Component<Props, State> {
   render() {
     const noneStyle = {
-      width: this.props.statsGraph.none * 4,
+      width: this.props.statsGraph.none * 8,
       backgroundColor: ESColors.none,
+      right:
+        this.props.statsGraph.infected * 8 +
+        this.props.statsGraph.recovered * 8 +
+        this.props.statsGraph.death * 8,
     };
     const infectedStyle = {
-      width: this.props.statsGraph.infected * 4,
+      width: this.props.statsGraph.infected * 8,
       backgroundColor: ESColors.infected,
+      right:
+        this.props.statsGraph.recovered * 8 + this.props.statsGraph.death * 8,
     };
     const recoveredStyle = {
-      width: this.props.statsGraph.recovered * 4,
+      width: this.props.statsGraph.recovered * 8,
       backgroundColor: ESColors.recovered,
+      right: this.props.statsGraph.death * 8,
     };
     const deathStyle = {
-      width: this.props.statsGraph.death * 4,
+      width: this.props.statsGraph.death * 8,
       backgroundColor: ESColors.death,
+    };
+    const mainBgColor = {
+      backgroundColor:
+        this.props.statsGraph.none > this.props.statsGraph.infected
+          ? ESColors.none
+          : this.props.statsGraph.infected > this.props.statsGraph.recovered
+          ? ESColors.infected
+          : ESColors.recovered,
     };
     return (
       <div className="containerTotalGraph">
-        <div className="containerGraph">
-          {this.props.statsGraph.none ? (
-            <div className="graph" style={noneStyle} />
-          ) : (
-            <Fragment />
-          )}
-          {this.props.statsGraph.infected ? (
-            <div className="graph" style={infectedStyle} />
-          ) : (
-            <Fragment />
-          )}
-          {this.props.statsGraph.recovered ? (
-            <div className="graph" style={recoveredStyle} />
-          ) : (
-            <Fragment />
-          )}
-          {this.props.statsGraph.death ? (
-            <div className="graph" style={deathStyle} />
-          ) : (
-            <Fragment />
-          )}
+        <div className="containerGraph" style={mainBgColor}>
+          <div className="graph" style={noneStyle} />
+          <div className="graph" style={infectedStyle} />
+          <div className="graph" style={recoveredStyle} />
+          <div className="graph" style={deathStyle} />
         </div>
         <div className="legend">
           <div className="legendItem">
             <div className="icon" style={{ backgroundColor: ESColors.none }} />
             <p className="descrip">
-              not infected {this.props.statsGraph.none}%
+              not infected {this.props.statsGraph.none * 2}%
             </p>
           </div>
           <div className="legendItem">
@@ -64,7 +63,7 @@ export default class Graph extends Component<Props, State> {
               style={{ backgroundColor: ESColors.infected }}
             />
             <p className="descrip">
-              infected {this.props.statsGraph.infected}%
+              infected {this.props.statsGraph.infected * 2}%
             </p>
           </div>
           <div className="legendItem">
@@ -73,12 +72,12 @@ export default class Graph extends Component<Props, State> {
               style={{ backgroundColor: ESColors.recovered }}
             />
             <p className="descrip">
-              recovered {this.props.statsGraph.recovered}%
+              recovered {this.props.statsGraph.recovered * 2}%
             </p>
           </div>
           <div className="legendItem">
             <div className="icon" style={{ backgroundColor: ESColors.death }} />
-            <p className="descrip">death {this.props.statsGraph.death}%</p>
+            <p className="descrip">death {this.props.statsGraph.death * 2}%</p>
           </div>
         </div>
       </div>

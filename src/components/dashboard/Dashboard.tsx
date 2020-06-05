@@ -16,7 +16,10 @@ interface Props {
 
 interface State {}
 
+
+
 export default class Dashboard extends Component<Props, State> {
+  
   render() {
     const activeStyle = {
       backgroundColor: "white",
@@ -26,6 +29,7 @@ export default class Dashboard extends Component<Props, State> {
       backgroundColor: ESColors.darkGrey,
       color: "white",
     };
+    
     return (
       <div className="containerDashboard">
         <Graph statsGraph={this.props.statsGraph} />
