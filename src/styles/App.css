@@ -115,6 +115,8 @@ body {
   width: 100px;
   height: 35px;
   background-color: #212523;
+  border-color: rgb(165, 164, 164);
+  border-width: 1px;
   color: white;
   border-radius: 7px;
   font-size: 15px;
