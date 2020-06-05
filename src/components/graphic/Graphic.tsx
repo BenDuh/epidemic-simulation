@@ -88,7 +88,7 @@ export default class Graphic extends Component<Props, State> {
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
       member = {
         id: i,
         x: this._getRandomArbitrary(2, 547),
@@ -140,7 +140,7 @@ export default class Graphic extends Component<Props, State> {
         this._infection(member, index);
         ctx.fillStyle = ESColors.none;
       } else if (member.status === PersonStatus.infected) {
-        this._isInfected(member);
+
         ctx.fillStyle = ESColors.infected;
       } else if (member.status === PersonStatus.recovered) {
         ctx.fillStyle = ESColors.recovered;
@@ -157,24 +157,16 @@ export default class Graphic extends Component<Props, State> {
     this.timer = setTimeout(() => requestAnimationFrame(this.draw), 1000 / fps);
   }
 
-  _isInfected(infected: Person): void {
-    let coordPersonInfected: PersonLight[] = this.state.coordPersonInfected;
-    let indexInfected = coordPersonInfected.findIndex((infected, i) => {
-      return infected.id === infected.id;
-    });
-    coordPersonInfected[indexInfected] = {
-      id: infected.id,
-      x: infected.x,
-      y: infected.y,
-    };
-
-    this.setState({ coordPersonInfected });
-  }
-
   _infection(person: Person, index: number): void {
-    let coordPersonInfected: PersonLight[] = this.state.coordPersonInfected;
+    let coordPersonInfected: PersonLight[] = []
+    let arrayMembers = this.state.arrayMembers
+    arrayMembers.map((member)=>{
+      if(member.status === PersonStatus.infected){
+        coordPersonInfected.push(member)
+      }
+    })
     let isInfected: boolean = false;
-    coordPersonInfected.map((infected, index) => {
+    coordPersonInfected.find((infected, index) => {
       if (
         this._inRange(
           person.x,

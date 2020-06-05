@@ -57,13 +57,20 @@ body {
 /* Graphique */
 .containerGraph {
   width: 400px;
-  margin-bottom: 25px;
+  margin-bottom: 45px;
   display: flex;
+  height: 30px;
+  background-color:white;
+  position: relative;
 }
 
 .graph {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
   height: 30px;
-  transition: width 500ms ease;
+  transition: all 0.5s ease;
 }
 
 .graphTransitionPlus {

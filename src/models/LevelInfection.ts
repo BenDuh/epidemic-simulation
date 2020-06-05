@@ -1,7 +1,7 @@
 enum LevelInfection{
-    low = 3,
-    medium = 6,
-    hard = 9
+    low = 9,
+    medium = 12,
+    hard = 14
 }
 
 export default LevelInfection
