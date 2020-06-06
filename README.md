@@ -1,6 +1,6 @@
 <h2>Epidemic Simulation</h2>
 
-This project was an epidemic simulation related to the recent Covid19 crisis.
+This project is an epidemic simulation related to the recent Covid19 crisis.
 
 run the project with `npm start`
 
