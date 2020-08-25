@@ -3,7 +3,7 @@ enum ESColors {
     infected = "#FFA23F",
     recovered = "#3EB392",
     death = "#1B3AB3",
-    darkGrey = "#212523"
+    darkGrey = "#735B6A"
 }
 
 export default ESColors
