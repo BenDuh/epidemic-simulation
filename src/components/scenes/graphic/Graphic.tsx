@@ -1,26 +1,54 @@
 import React, { Component } from "react";
-import "../../styles/App.css";
+import "../../../styles/App.css";
 
-import Person from "../../models/Person";
-import PersonLight from "../../models/PersonLight";
-import PersonStatus from "../../models/PersonStatus";
+import Person from "../../../models/Person";
+import PersonLight from "../../../models/PersonLight";
+import PersonStatus from "../../../models/PersonStatus";
 import { delay } from "lodash";
-import ESColors from "../../ressources/ESColors";
+import {
+  _getRandomArbitrary,
+  _inRange,
+} from "../../../handlers/GeneralHandlers";
+import ESColors from "../../../ressources/ESColors";
 import Dashboard from "../dashboard/Dashboard";
-import StatsGraph from "../../models/StatsGraph";
-import DistancingSocial from "../../models/DistancingSocial";
-import LevelInfection from "../../models/LevelInfection";
+import StatsGraph from "../../../models/StatsGraph";
+import styled from "styled-components";
+
+const ContainerCanvasDashboard = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 30px 0;
+  padding-bottom: 200px;
+`;
+
+export const ContainerCanvas = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Button = styled.button`
+  width: 100px;
+  height: 35px;
+  background-color: #212523;
+  border-color: rgb(165, 164, 164);
+  border-width: 1px;
+  color: white;
+  border-radius: 7px;
+  font-size: 15px;
+  font-weight: 100;
+`;
 
 interface Props {}
 interface State {
   contextCanvas: any;
   arrayMembers: Person[];
   coordPersonInfected: PersonLight[];
-  distancingSocial: DistancingSocial;
-  levelInfection: LevelInfection;
+  distancingSocial: number;
+  levelInfection: number;
 }
 
-const fps: number = 60;
 export default class Graphic extends Component<Props, State> {
   timer: any;
   constructor(props: Props) {
@@ -29,8 +57,8 @@ export default class Graphic extends Component<Props, State> {
       contextCanvas: React.createRef(),
       arrayMembers: [],
       coordPersonInfected: [],
-      distancingSocial: DistancingSocial.hard,
-      levelInfection: LevelInfection.low,
+      distancingSocial: 2,
+      levelInfection: 5,
     };
     this.timer = null;
     this.draw = this.draw.bind(this);
@@ -46,8 +74,8 @@ export default class Graphic extends Component<Props, State> {
       marginTop: 15,
     };
     return (
-      <div className="containerCanvasDashboard">
-        <div className="containerCanvas">
+      <ContainerCanvasDashboard>
+        <ContainerCanvas>
           <canvas
             ref="canvas"
             width={550}
@@ -55,32 +83,32 @@ export default class Graphic extends Component<Props, State> {
             className="canvas"
             id="canvas"
           />
-          <button
+          <Button
             className="button"
             style={buttonReset}
             onClick={() => this._resetAction(true)}
           >
             reset simulation
-          </button>
-        </div>
+          </Button>
+        </ContainerCanvas>
         <Dashboard
           statsGraph={this._statsGraphic()}
-          changeDistSoc={(distancingSocial: DistancingSocial) =>
+          changeDistSoc={(distancingSocial: number) =>
             this._changeDistancingSocial(distancingSocial)
           }
           distancingSocial={this.state.distancingSocial}
-          changeLevelInfection={(levelInfection: LevelInfection) =>
+          changeLevelInfection={(levelInfection: number) =>
             this._changeLevelInfection(levelInfection)
           }
           levelInfection={this.state.levelInfection}
         />
-      </div>
+      </ContainerCanvasDashboard>
     );
   }
 
   _resetAction(clear?: boolean) {
     let member: Person;
-    let arrayMembers: any = [];
+    let arrayMembers: Person[] = [];
     let coordPersonInfected: PersonLight[] = [];
     if (clear) {
       clearTimeout(this.timer);
@@ -88,11 +116,11 @@ export default class Graphic extends Component<Props, State> {
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 25; i++) {
       member = {
         id: i,
-        x: this._getRandomArbitrary(2, 547),
-        y: this._getRandomArbitrary(2, 322),
+        x: _getRandomArbitrary(2, 547),
+        y: _getRandomArbitrary(2, 322),
         oldX: 0,
         oldY: 0,
         oldDirectionX: 0,
@@ -105,15 +133,11 @@ export default class Graphic extends Component<Props, State> {
       arrayMembers.push(member);
     }
     this.setState({ arrayMembers, coordPersonInfected }, () => this.draw());
-    delay(() => this._curedOrDeath(0, 0), 15000);
+    delay(() => this._curedOrDeath(0, 0), 20000);
   }
 
-  _changeDistancingSocial(distancingSocial: DistancingSocial): void {
-    this.setState({ distancingSocial });
-  }
-
-  _getRandomArbitrary(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min) + min);
+  _changeDistancingSocial(distancingSocial: number): void {
+    this.setState({ distancingSocial: Math.round(distancingSocial) });
   }
 
   draw(): void {
@@ -140,7 +164,6 @@ export default class Graphic extends Component<Props, State> {
         this._infection(member, index);
         ctx.fillStyle = ESColors.none;
       } else if (member.status === PersonStatus.infected) {
-
         ctx.fillStyle = ESColors.infected;
       } else if (member.status === PersonStatus.recovered) {
         ctx.fillStyle = ESColors.recovered;
@@ -154,26 +177,26 @@ export default class Graphic extends Component<Props, State> {
         this._limitCanvas(member, statusInfected, index);
       }
     });
-    this.timer = setTimeout(() => requestAnimationFrame(this.draw), 1000 / fps);
+    requestAnimationFrame(this.draw);
   }
 
   _infection(person: Person, index: number): void {
-    let coordPersonInfected: PersonLight[] = []
-    let arrayMembers = this.state.arrayMembers
-    arrayMembers.map((member)=>{
-      if(member.status === PersonStatus.infected){
-        coordPersonInfected.push(member)
+    let coordPersonInfected: PersonLight[] = [];
+    let arrayMembers = this.state.arrayMembers;
+    arrayMembers.map((member) => {
+      if (member.status === PersonStatus.infected) {
+        coordPersonInfected.push(member);
       }
-    })
+    });
     let isInfected: boolean = false;
     coordPersonInfected.find((infected, index) => {
       if (
-        this._inRange(
+        _inRange(
           person.x,
           infected.x - this.state.levelInfection,
           infected.x + this.state.levelInfection
         ) &&
-        this._inRange(
+        _inRange(
           person.y,
           infected.y - this.state.levelInfection,
           infected.y + this.state.levelInfection
@@ -194,7 +217,7 @@ export default class Graphic extends Component<Props, State> {
       this.setState({ coordPersonInfected, arrayMembers }, () =>
         delay(
           () => this._curedOrDeath(index, coordPersonInfected.length - 1),
-          15000
+          20000
         )
       );
     }
@@ -211,10 +234,6 @@ export default class Graphic extends Component<Props, State> {
       arrayMembers[indexMember].status = PersonStatus.death;
     }
     this.setState({ arrayMembers });
-  }
-
-  _inRange(x: number, min: number, max: number): boolean {
-    return (x - min) * (x - max) <= 0;
   }
 
   _direction(
@@ -279,22 +298,22 @@ export default class Graphic extends Component<Props, State> {
     let luckChangeDirection = Math.random();
     let directionNull: boolean =
       member.oldDirectionX === 0 && member.oldDirectionY === 0;
-    let limitCanvasXMin: boolean = this._inRange(
+    let limitCanvasXMin: boolean = _inRange(
       x,
       2,
       2 + 2 * this.state.distancingSocial
     );
-    let limitCanvasXMax: boolean = this._inRange(
+    let limitCanvasXMax: boolean = _inRange(
       x,
       547,
       547 - 2 * this.state.distancingSocial
     );
-    let limitCanvasYMin: boolean = this._inRange(
+    let limitCanvasYMin: boolean = _inRange(
       y,
       2,
       2 + 2 * this.state.distancingSocial
     );
-    let limitCanvasYMax: boolean = this._inRange(
+    let limitCanvasYMax: boolean = _inRange(
       y,
       322,
       322 - 2 * this.state.distancingSocial
@@ -346,7 +365,7 @@ export default class Graphic extends Component<Props, State> {
     });
   }
 
-  _changeLevelInfection(levelInfection: LevelInfection) {
+  _changeLevelInfection(levelInfection: number): void {
     this.setState({ levelInfection });
   }
 
