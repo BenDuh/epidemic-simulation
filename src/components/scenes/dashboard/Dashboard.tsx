@@ -47,7 +47,7 @@ const Dashboard = ({
           onChange={(e) => changeDistSoc(parseInt(e.target.value))}
         />
       </ContainerInput>
-      <ESTitle text="Infection area" />
+      <ESTitle text="Contagiousness" />
       <ContainerInput>
         <ESInput
           min={1}
