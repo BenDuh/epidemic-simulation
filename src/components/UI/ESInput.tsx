@@ -5,6 +5,7 @@ import ESColors from "../../ressources/ESColors";
 const Input = styled.input`
   -webkit-appearance: none;
   margin: 10px 0;
+  background: transparent;
   width: 100%;
   &:focus {
     outline: none;
@@ -13,14 +14,13 @@ const Input = styled.input`
     width: 100%;
     height: 15px;
     cursor: pointer;
-    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
     background: ${ESColors.none};
-    border: none;
+    border-radius:3px;
   }
   &::-webkit-slider-thumb {
     border: 0px solid #000000;
     height: 20px;
-    border-radius: 2px;
+    border-radius: 5px;
     width: 20px;
     background: ${ESColors.darkGrey};
     cursor: pointer;
