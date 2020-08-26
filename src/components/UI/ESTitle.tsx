@@ -12,11 +12,7 @@ interface Props {
 }
 
 const ESTitle = ({ text }: Props) => {
-  return (
-    <div>
-      <Title>{text}</Title>
-    </div>
-  );
+  return <Title>{text}</Title>;
 };
 
 export default ESTitle;

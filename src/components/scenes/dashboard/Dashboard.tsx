@@ -1,8 +1,6 @@
-import React, { Component } from "react";
-import "../../../styles/App.css";
+import React from "react";
 import Graph from "./Graph";
 import StatsGraph from "../../../models/StatsGraph";
-import ESColors from "../../../ressources/ESColors";
 import styled from "styled-components";
 import ESTitle from "../../UI/ESTitle";
 import { ESInput } from "../../UI/ESInput";

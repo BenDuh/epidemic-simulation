@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import "../../../styles/App.css";
-
 import Person from "../../../models/Person";
 import PersonLight from "../../../models/PersonLight";
 import PersonStatus from "../../../models/PersonStatus";
@@ -106,7 +104,7 @@ export default class Graphic extends Component<Props, State> {
     );
   }
 
-  _resetAction(clear?: boolean) {
+  _resetAction(clear?: boolean): void {
     let member: Person;
     let arrayMembers: Person[] = [];
     let coordPersonInfected: PersonLight[] = [];
@@ -143,7 +141,7 @@ export default class Graphic extends Component<Props, State> {
   draw(): void {
     const canvas: any = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    this.state.arrayMembers.map((member: Person, index: number) => {
+    this.state.arrayMembers.forEach((member: Person, index: number) => {
       let statusInfected = member.status;
       if (
         this.state.coordPersonInfected.find(
@@ -183,13 +181,13 @@ export default class Graphic extends Component<Props, State> {
   _infection(person: Person, index: number): void {
     let coordPersonInfected: PersonLight[] = [];
     let arrayMembers = this.state.arrayMembers;
-    arrayMembers.map((member) => {
-      if (member.status === PersonStatus.infected) {
+    arrayMembers.forEach((member, index) => {
+      if (arrayMembers[index].status === PersonStatus.infected) {
         coordPersonInfected.push(member);
       }
     });
     let isInfected: boolean = false;
-    coordPersonInfected.find((infected, index) => {
+    coordPersonInfected.forEach((infected, index) => {
       if (
         _inRange(
           person.x,
@@ -224,9 +222,7 @@ export default class Graphic extends Component<Props, State> {
   }
 
   _curedOrDeath(indexMember: number, indexInfected: number): void {
-    let coordPersonInfected: PersonLight[] = this.state.coordPersonInfected;
     let arrayMembers: Person[] = this.state.arrayMembers;
-    coordPersonInfected = coordPersonInfected.splice(indexInfected, 2);
     let luck = Math.random();
     if (luck < 0.8) {
       arrayMembers[indexMember].status = PersonStatus.recovered;
@@ -376,7 +372,7 @@ export default class Graphic extends Component<Props, State> {
       recovered: 0,
       death: 0,
     };
-    this.state.arrayMembers.map((member) => {
+    this.state.arrayMembers.forEach((member) => {
       switch (member.status) {
         case PersonStatus.none:
           statsGraph.none = statsGraph.none + 1;
